@@ -1,0 +1,1243 @@
+
+<!-- saved from url=(0059)file:///C:/Users/xmich/Downloads/mib_credit_calculator.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
+
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIB Curriculum Credit Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.4;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding-bottom: 80px;
+        }
+        
+        .fixed-tracker {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e0e0e0;
+            padding: 15px 20px;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .tracker-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .tracker-circle {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #ecf0f1;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .tracker-number {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #2c3e50;
+            line-height: 1;
+        }
+        
+        .tracker-label {
+            font-size: 0.6em;
+            color: #7f8c8d;
+            font-weight: 500;
+            line-height: 1;
+        }
+        
+        .tracker-progress {
+            flex: 1;
+            max-width: 300px;
+        }
+        
+        .tracker-progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #ecf0f1;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .tracker-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+        
+        .tracker-status {
+            text-align: center;
+            font-size: 0.85em;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .tracker-over-limit {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #f39c12;
+            color: white;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .courses-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        }
+        
+        .category {
+            margin-bottom: 20px;
+        }
+        
+        .category-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: white;
+        }
+        
+        .general-courses { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .foundation-courses { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .frontier-courses { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .elective-courses { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        
+        .course-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            border: 1px solid #ecf0f1;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .course-item:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .course-item.selected {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-color: #2980b9;
+            color: white;
+        }
+        
+        .course-item.compulsory.selected {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-color: #c0392b;
+        }
+        
+        .course-checkbox {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            accent-color: #3498db;
+        }
+        
+        .course-details {
+            flex: 1;
+        }
+        
+        .course-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+            font-size: 0.95em;
+        }
+        
+        .course-meta {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+        
+        .course-item.selected .course-meta {
+            opacity: 0.9;
+        }
+        
+        .course-credit {
+            background: #34495e;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            min-width: 35px;
+            text-align: center;
+            font-size: 0.85em;
+        }
+        
+        .course-item.selected .course-credit {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .compulsory-tag {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.7em;
+            margin-left: 6px;
+            font-weight: 500;
+        }
+        
+        .gpa-tag {
+            background: #f39c12;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.7em;
+            margin-left: 4px;
+            font-weight: 500;
+        }
+        
+        .special-tag {
+            background: #9b59b6;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.7em;
+            margin-left: 4px;
+            font-weight: 500;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .credit-summary {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .credit-circle {
+            width: 100px;
+            height: 100px;
+            border: 6px solid #ecf0f1;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .credit-number {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .credit-label {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .over-limit-indicator {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #f39c12;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .semester-breakdown {
+            margin-top: 20px;
+        }
+        
+        .semester-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            margin-bottom: 4px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
+            font-size: 0.9em;
+        }
+        
+        .semester-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .semester-credits {
+            font-weight: 600;
+            color: #3498db;
+        }
+        
+        .reset-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .notes {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.85em;
+        }
+        
+        .notes h4 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .notes ul {
+            color: #856404;
+            padding-left: 15px;
+        }
+        
+        .notes li {
+            margin-bottom: 3px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .sidebar {
+                position: static;
+            }
+        }
+    </style>
+
+
+    <div class="container">
+        <div class="header">
+            <h1>MIB Curriculum Calculator</h1>
+            <p>Select your courses to reach exactly 35 credits</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="courses-section">
+                <div class="category">
+                    <div class="category-title general-courses">General Courses</div>
+                    <div id="general-courses"><div class="course-item compulsory selected">
+                        <input type="checkbox" class="course-checkbox" id="general-0" checked="" disabled="">
+                        <div class="course-details">
+                            <div class="course-title">Chinese Language</div>
+                            <div class="course-meta">
+                                CHN6207 • Fall
+                                <span class="compulsory-tag">Compulsory</span>
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">4</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="general-1">
+                        <div class="course-details">
+                            <div class="course-title">Advanced Chinese Language</div>
+                            <div class="course-meta">
+                                CN16007(8) • Spring
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">0</div>
+                    </div><div class="course-item compulsory selected">
+                        <input type="checkbox" class="course-checkbox" id="general-2" checked="" disabled="">
+                        <div class="course-details">
+                            <div class="course-title">Intro to Chinese Culture</div>
+                            <div class="course-meta">
+                                CHN0916 • Spring
+                                <span class="compulsory-tag">Compulsory</span>
+                                <span class="gpa-tag">GPA*</span>
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item compulsory selected">
+                        <input type="checkbox" class="course-checkbox" id="general-3" checked="" disabled="">
+                        <div class="course-details">
+                            <div class="course-title">Academic English</div>
+                            <div class="course-meta">
+                                FL6001 • Spring
+                                <span class="compulsory-tag">Compulsory</span>
+                                <span class="gpa-tag">GPA*</span>
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div></div>
+                </div>
+                
+                <div class="category">
+                    <div class="category-title foundation-courses">Foundation Courses</div>
+                    <div id="foundation-courses"><div class="course-item compulsory selected">
+                        <input type="checkbox" class="course-checkbox" id="foundation-0" checked="" disabled="">
+                        <div class="course-details">
+                            <div class="course-title">International Economics</div>
+                            <div class="course-meta">
+                                ECON8008 • Fall
+                                <span class="compulsory-tag">Compulsory</span>
+                                <span class="gpa-tag">GPA*</span>
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">3</div>
+                    </div><div class="course-item compulsory selected">
+                        <input type="checkbox" class="course-checkbox" id="foundation-1" checked="" disabled="">
+                        <div class="course-details">
+                            <div class="course-title">Applied Statistics</div>
+                            <div class="course-meta">
+                                BUSS6011 • Fall
+                                <span class="compulsory-tag">Compulsory</span>
+                                <span class="gpa-tag">GPA*</span>
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item compulsory selected">
+                        <input type="checkbox" class="course-checkbox" id="foundation-2" checked="" disabled="">
+                        <div class="course-details">
+                            <div class="course-title">Academic Writing &amp; Ethics</div>
+                            <div class="course-meta">
+                                GE6001 • Spring
+                                <span class="compulsory-tag">Compulsory</span>
+                                <span class="gpa-tag">GPA*</span>
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">1</div>
+                    </div><div class="course-item compulsory selected">
+                        <input type="checkbox" class="course-checkbox" id="foundation-3" checked="" disabled="">
+                        <div class="course-details">
+                            <div class="course-title">Management Essentials &amp; Leadership</div>
+                            <div class="course-meta">
+                                BUSS6003 • Fall
+                                <span class="compulsory-tag">Compulsory</span>
+                                <span class="gpa-tag">GPA*</span>
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item compulsory selected">
+                        <input type="checkbox" class="course-checkbox" id="foundation-4" checked="" disabled="">
+                        <div class="course-details">
+                            <div class="course-title">Chinese Economy</div>
+                            <div class="course-meta">
+                                BUSS6012 • Spring
+                                <span class="compulsory-tag">Compulsory</span>
+                                <span class="gpa-tag">GPA*</span>
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item compulsory selected">
+                        <input type="checkbox" class="course-checkbox" id="foundation-5" checked="" disabled="">
+                        <div class="course-details">
+                            <div class="course-title">Financial Management</div>
+                            <div class="course-meta">
+                                BUSS6001 • Spring
+                                <span class="compulsory-tag">Compulsory</span>
+                                <span class="gpa-tag">GPA*</span>
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">3</div>
+                    </div></div>
+                </div>
+                
+                <div class="category">
+                    <div class="category-title frontier-courses">Frontier Courses</div>
+                    <div id="frontier-courses"><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="frontier-0">
+                        <div class="course-details">
+                            <div class="course-title">Banking Industry in China</div>
+                            <div class="course-meta">
+                                BUSS8030 • Spring
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">1</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="frontier-1">
+                        <div class="course-details">
+                            <div class="course-title">Business Law in China</div>
+                            <div class="course-meta">
+                                BUSS8029 • Fall
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="frontier-2">
+                        <div class="course-details">
+                            <div class="course-title">China (1) Organization Behaviors</div>
+                            <div class="course-meta">
+                                BUSS8025 • Fall
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">1.5</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="frontier-3">
+                        <div class="course-details">
+                            <div class="course-title">China (2) HR Management</div>
+                            <div class="course-meta">
+                                BUSS8022 • Spring
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">1</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="frontier-4">
+                        <div class="course-details">
+                            <div class="course-title">China (3) Marketing</div>
+                            <div class="course-meta">
+                                BUSS8026 • Fall
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="frontier-5">
+                        <div class="course-details">
+                            <div class="course-title">China (4) Operations Management</div>
+                            <div class="course-meta">
+                                BUSS8027 • Spring
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">1</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="frontier-6">
+                        <div class="course-details">
+                            <div class="course-title">China (5) Investment</div>
+                            <div class="course-meta">
+                                BUSS8023 • Spring
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="frontier-7">
+                        <div class="course-details">
+                            <div class="course-title">China (6) E-commerce</div>
+                            <div class="course-meta">
+                                BUSS8426 • Spring
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item compulsory selected">
+                        <input type="checkbox" class="course-checkbox" id="frontier-8" checked="" disabled="">
+                        <div class="course-details">
+                            <div class="course-title">Seminars</div>
+                            <div class="course-meta">
+                                GE6012 • Spring
+                                <span class="compulsory-tag">Compulsory</span>
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div></div>
+                </div>
+                
+                <div class="category">
+                    <div class="category-title elective-courses">Elective Courses</div>
+                    <div id="elective-courses"><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="elective-0">
+                        <div class="course-details">
+                            <div class="course-title">Business Economics</div>
+                            <div class="course-meta">
+                                BUSS8010 • Fall &amp; Spring
+                                
+                                
+                                <span class="gpa-tag">Non-Econ/Mgmt**</span>
+                            </div>
+                        </div>
+                        <div class="course-credit">3</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="elective-1">
+                        <div class="course-details">
+                            <div class="course-title">Accounting for Managers</div>
+                            <div class="course-meta">
+                                BUSS8005 • Fall
+                                
+                                
+                                <span class="gpa-tag">Non-Econ/Mgmt**</span>
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="elective-2">
+                        <div class="course-details">
+                            <div class="course-title">Cross-cultural Management</div>
+                            <div class="course-meta">
+                                BUSS8007 • Fall
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="elective-3">
+                        <div class="course-details">
+                            <div class="course-title">Data Model &amp; Decision Making</div>
+                            <div class="course-meta">
+                                BUSS8014 • Fall
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="elective-4">
+                        <div class="course-details">
+                            <div class="course-title">Macroeconomics</div>
+                            <div class="course-meta">
+                                BUSS8004 • Spring
+                                
+                                
+                                <span class="gpa-tag">Non-Econ/Mgmt**</span>
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="elective-5">
+                        <div class="course-details">
+                            <div class="course-title">Strategic Management</div>
+                            <div class="course-meta">
+                                BUSS8011 • Spring
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="elective-6">
+                        <div class="course-details">
+                            <div class="course-title">Business Consulting &amp; Change Mgmt</div>
+                            <div class="course-meta">
+                                BUSS8013 • Spring
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">2</div>
+                    </div><div class="course-item">
+                        <input type="checkbox" class="course-checkbox" id="elective-7">
+                        <div class="course-details">
+                            <div class="course-title">Study Tour</div>
+                            <div class="course-meta">
+                                BUSS8038 • Spring
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="course-credit">1</div>
+                    </div></div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="credit-summary">
+                    <div class="credit-circle" style="border-color: rgb(236, 240, 241); background: transparent;">
+                        <div class="credit-number" id="total-credits">23</div>
+                        <div class="credit-label">/ 35 Credits</div>
+                        <div class="over-limit-indicator" id="over-limit" style="display: none;">!</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 65.7143%;"></div>
+                    </div>
+                </div>
+                
+                <div class="semester-breakdown">
+                    <h4 style="margin-bottom: 15px; color: #2c3e50;">Semester Breakdown</h4>
+                    <div class="semester-item">
+                        <span class="semester-name">Fall</span>
+                        <span class="semester-credits" id="fall-credits">11 credits</span>
+                    </div>
+                    <div class="semester-item">
+                        <span class="semester-name">Spring</span>
+                        <span class="semester-credits" id="spring-credits">12 credits</span>
+                    </div>
+                    <div class="semester-item">
+                        <span class="semester-name">Fall &amp; Spring</span>
+                        <span class="semester-credits" id="both-credits">0 credits</span>
+                    </div>
+                </div>
+                
+                <button class="reset-btn" onclick="resetSelection()">Reset All</button>
+                
+                <div class="notes">
+                    <h4>Important Notes:</h4>
+                    <ul>
+                        <li>Courses marked with * count toward GPA (minimum 2.7 required)</li>
+                        <li>** Special Requirement: Required for students without Economics/Management background</li>
+                        <li>Not all elective courses open every year</li>
+                        <li>Minimum 2/3 attendance required for exam eligibility</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fixed-tracker">
+            <div class="tracker-content">
+                <div class="tracker-circle" id="tracker-circle" style="border-color: rgb(236, 240, 241); background: transparent;">
+                    <div class="tracker-number" id="tracker-credits">23</div>
+                    <div class="tracker-label">/ 35</div>
+                    <div class="tracker-over-limit" id="tracker-over-limit" style="display: none;">!</div>
+                </div>
+                <div class="tracker-progress">
+                    <div class="tracker-progress-bar">
+                        <div class="tracker-progress-fill" id="tracker-progress-fill" style="width: 65.7143%;"></div>
+                    </div>
+                    <div class="tracker-status" id="tracker-status" style="color: rgb(127, 140, 141);">12 more credits needed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const courses = {
+            'general': [
+                {
+                    title: 'Chinese Language',
+                    code: 'CHN6207',
+                    credits: 4,
+                    semester: 'Fall',
+                    compulsory: true,
+                    gpa: false
+                },
+                {
+                    title: 'Advanced Chinese Language',
+                    code: 'CN16007(8)',
+                    credits: 0,
+                    semester: 'Spring',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'Intro to Chinese Culture',
+                    code: 'CHN0916',
+                    credits: 2,
+                    semester: 'Spring',
+                    compulsory: true,
+                    gpa: true
+                },
+                {
+                    title: 'Academic English',
+                    code: 'FL6001',
+                    credits: 2,
+                    semester: 'Spring',
+                    compulsory: true,
+                    gpa: true
+                }
+            ],
+            'foundation': [
+                {
+                    title: 'International Economics',
+                    code: 'ECON8008',
+                    credits: 3,
+                    semester: 'Fall',
+                    compulsory: true,
+                    gpa: true
+                },
+                {
+                    title: 'Applied Statistics',
+                    code: 'BUSS6011',
+                    credits: 2,
+                    semester: 'Fall',
+                    compulsory: true,
+                    gpa: true
+                },
+                {
+                    title: 'Academic Writing & Ethics',
+                    code: 'GE6001',
+                    credits: 1,
+                    semester: 'Spring',
+                    compulsory: true,
+                    gpa: true
+                },
+                {
+                    title: 'Management Essentials & Leadership',
+                    code: 'BUSS6003',
+                    credits: 2,
+                    semester: 'Fall',
+                    compulsory: true,
+                    gpa: true
+                },
+                {
+                    title: 'Chinese Economy',
+                    code: 'BUSS6012',
+                    credits: 2,
+                    semester: 'Spring',
+                    compulsory: true,
+                    gpa: true
+                },
+                {
+                    title: 'Financial Management',
+                    code: 'BUSS6001',
+                    credits: 3,
+                    semester: 'Spring',
+                    compulsory: true,
+                    gpa: true
+                }
+            ],
+            'frontier': [
+                {
+                    title: 'Banking Industry in China',
+                    code: 'BUSS8030',
+                    credits: 1,
+                    semester: 'Spring',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'Business Law in China',
+                    code: 'BUSS8029',
+                    credits: 2,
+                    semester: 'Fall',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'China (1) Organization Behaviors',
+                    code: 'BUSS8025',
+                    credits: 1.5,
+                    semester: 'Fall',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'China (2) HR Management',
+                    code: 'BUSS8022',
+                    credits: 1,
+                    semester: 'Spring',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'China (3) Marketing',
+                    code: 'BUSS8026',
+                    credits: 2,
+                    semester: 'Fall',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'China (4) Operations Management',
+                    code: 'BUSS8027',
+                    credits: 1,
+                    semester: 'Spring',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'China (5) Investment',
+                    code: 'BUSS8023',
+                    credits: 2,
+                    semester: 'Spring',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'China (6) E-commerce',
+                    code: 'BUSS8426',
+                    credits: 2,
+                    semester: 'Spring',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'Seminars',
+                    code: 'GE6012',
+                    credits: 2,
+                    semester: 'Spring',
+                    compulsory: true,
+                    gpa: false
+                }
+            ],
+            'elective': [
+                {
+                    title: 'Business Economics',
+                    code: 'BUSS8010',
+                    credits: 3,
+                    semester: 'Fall & Spring',
+                    compulsory: false,
+                    gpa: false,
+                    special: true
+                },
+                {
+                    title: 'Accounting for Managers',
+                    code: 'BUSS8005',
+                    credits: 2,
+                    semester: 'Fall',
+                    compulsory: false,
+                    gpa: false,
+                    special: true
+                },
+                {
+                    title: 'Cross-cultural Management',
+                    code: 'BUSS8007',
+                    credits: 2,
+                    semester: 'Fall',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'Data Model & Decision Making',
+                    code: 'BUSS8014',
+                    credits: 2,
+                    semester: 'Fall',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'Macroeconomics',
+                    code: 'BUSS8004',
+                    credits: 2,
+                    semester: 'Spring',
+                    compulsory: false,
+                    gpa: false,
+                    special: true
+                },
+                {
+                    title: 'Strategic Management',
+                    code: 'BUSS8011',
+                    credits: 2,
+                    semester: 'Spring',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'Business Consulting & Change Mgmt',
+                    code: 'BUSS8013',
+                    credits: 2,
+                    semester: 'Spring',
+                    compulsory: false,
+                    gpa: false
+                },
+                {
+                    title: 'Study Tour',
+                    code: 'BUSS8038',
+                    credits: 1,
+                    semester: 'Spring',
+                    compulsory: false,
+                    gpa: false
+                }
+            ]
+        };
+
+        let selectedCourses = new Set();
+
+        function renderCourses() {
+            Object.keys(courses).forEach(category => {
+                const container = document.getElementById(`${category}-courses`);
+                container.innerHTML = '';
+                
+                courses[category].forEach((course, index) => {
+                    const courseId = `${category}-${index}`;
+                    const courseElement = document.createElement('div');
+                    courseElement.className = `course-item ${course.compulsory ? 'compulsory' : ''}`;
+                    courseElement.innerHTML = `
+                        <input type="checkbox" class="course-checkbox" id="${courseId}" ${course.compulsory ? 'checked disabled' : ''}>
+                        <div class="course-details">
+                            <div class="course-title">${course.title}</div>
+                            <div class="course-meta">
+                                ${course.code} • ${course.semester}
+                                ${course.compulsory ? '<span class="compulsory-tag">Compulsory</span>' : ''}
+                                ${course.gpa ? '<span class="gpa-tag">GPA*</span>' : ''}
+                                ${course.special ? '<span class="gpa-tag">**</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="course-credit">${course.credits}</div>
+                    `;
+                    
+                    if (course.compulsory) {
+                        selectedCourses.add(courseId);
+                        courseElement.classList.add('selected');
+                    }
+                    
+                    const checkbox = courseElement.querySelector('.course-checkbox');
+                    checkbox.addEventListener('change', () => toggleCourse(courseId, course, courseElement));
+                    
+                    container.appendChild(courseElement);
+                });
+            });
+            updateSummary();
+        }
+
+        function toggleCourse(courseId, course, element) {
+            if (selectedCourses.has(courseId)) {
+                selectedCourses.delete(courseId);
+                element.classList.remove('selected');
+            } else {
+                selectedCourses.add(courseId);
+                element.classList.add('selected');
+            }
+            updateSummary();
+        }
+
+        function updateSummary() {
+            let totalCredits = 0;
+            let fallCredits = 0;
+            let springCredits = 0;
+            let bothCredits = 0;
+
+            selectedCourses.forEach(courseId => {
+                const [category, index] = courseId.split('-');
+                const course = courses[category][parseInt(index)];
+                totalCredits += course.credits;
+                
+                if (course.semester === 'Fall') {
+                    fallCredits += course.credits;
+                } else if (course.semester === 'Spring') {
+                    springCredits += course.credits;
+                } else if (course.semester === 'Fall & Spring') {
+                    bothCredits += course.credits;
+                }
+            });
+
+            document.getElementById('total-credits').textContent = totalCredits;
+            document.getElementById('fall-credits').textContent = `${fallCredits} credits`;
+            document.getElementById('spring-credits').textContent = `${springCredits} credits`;
+            document.getElementById('both-credits').textContent = `${bothCredits} credits`;
+            
+            const progressPercent = Math.min((totalCredits / 35) * 100, 100);
+            document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+            
+            // Update fixed tracker
+            document.getElementById('tracker-credits').textContent = totalCredits;
+            document.getElementById('tracker-progress-fill').style.width = `${progressPercent}%`;
+            
+            const trackerCircle = document.getElementById('tracker-circle');
+            const trackerOverLimit = document.getElementById('tracker-over-limit');
+            const trackerStatus = document.getElementById('tracker-status');
+            
+            if (totalCredits === 35) {
+                trackerCircle.style.borderColor = '#2ecc71';
+                trackerCircle.style.background = 'rgba(46, 204, 113, 0.1)';
+                trackerOverLimit.style.display = 'none';
+                trackerStatus.textContent = 'Perfect! 35 credits selected';
+                trackerStatus.style.color = '#2ecc71';
+            } else if (totalCredits > 35) {
+                trackerCircle.style.borderColor = '#f39c12';
+                trackerCircle.style.background = 'rgba(243, 156, 18, 0.1)';
+                trackerOverLimit.style.display = 'flex';
+                trackerOverLimit.textContent = '+' + (totalCredits - 35);
+                trackerStatus.textContent = `${totalCredits - 35} credits over limit`;
+                trackerStatus.style.color = '#f39c12';
+            } else {
+                const remaining = 35 - totalCredits;
+                trackerCircle.style.borderColor = '#ecf0f1';
+                trackerCircle.style.background = 'transparent';
+                trackerOverLimit.style.display = 'none';
+                trackerStatus.textContent = `${remaining} more credits needed`;
+                trackerStatus.style.color = '#7f8c8d';
+            }
+            
+            const creditCircle = document.querySelector('.credit-circle');
+            const overLimit = document.getElementById('over-limit');
+            
+            if (totalCredits === 35) {
+                creditCircle.style.borderColor = '#2ecc71';
+                creditCircle.style.background = 'rgba(46, 204, 113, 0.1)';
+                overLimit.style.display = 'none';
+            } else if (totalCredits > 35) {
+                creditCircle.style.borderColor = '#f39c12';
+                creditCircle.style.background = 'rgba(243, 156, 18, 0.1)';
+                overLimit.style.display = 'flex';
+                overLimit.textContent = '+' + (totalCredits - 35);
+            } else {
+                creditCircle.style.borderColor = '#ecf0f1';
+                creditCircle.style.background = 'transparent';
+                overLimit.style.display = 'none';
+            }
+        }
+
+        function resetSelection() {
+            selectedCourses.clear();
+            
+            // Re-add compulsory courses
+            Object.keys(courses).forEach(category => {
+                courses[category].forEach((course, index) => {
+                    if (course.compulsory) {
+                        selectedCourses.add(`${category}-${index}`);
+                    }
+                });
+            });
+            
+            // Update UI
+            document.querySelectorAll('.course-item').forEach(item => {
+                const checkbox = item.querySelector('.course-checkbox');
+                const courseId = checkbox.id;
+                
+                if (selectedCourses.has(courseId)) {
+                    item.classList.add('selected');
+                    checkbox.checked = true;
+                } else {
+                    item.classList.remove('selected');
+                    checkbox.checked = false;
+                }
+            });
+            
+            updateSummary();
+        }
+
+        // Initialize the calculator
+        renderCourses();
+    </script>
+
+</body></html>
