@@ -440,7 +440,7 @@
     <div class="container">
         <div class="header">
             <h1>MIB Curriculum Calculator</h1>
-            <p>Select your courses to reach exactly 35 credits</p>
+            <p>Select your courses to reach at least 35 credits</p>
         </div>
         
         <div class="main-content">
@@ -1177,7 +1177,7 @@
                 trackerCircle.style.background = 'rgba(243, 156, 18, 0.1)';
                 trackerOverLimit.style.display = 'flex';
                 trackerOverLimit.textContent = '+' + (totalCredits - 35);
-                trackerStatus.textContent = `${totalCredits - 35} credits over limit`;
+                trackerStatus.textContent = `${totalCredits - 35} credits over`;
                 trackerStatus.style.color = '#f39c12';
             } else {
                 const remaining = 35 - totalCredits;
